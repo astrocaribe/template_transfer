@@ -1,0 +1,5 @@
+sendgrid:
+  username: user
+  password: pass
+
+endpoint: https://api.sendgrid.com/v3/templates

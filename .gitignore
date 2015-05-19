@@ -1,0 +1,11 @@
+# Omit config files
+config/config.yml
+
+# Omit gems
+*.gem
+
+# Omit RVM startup files
+.ruby-*
+
+# Omit Gemfile Lock
+Gemfile.lock

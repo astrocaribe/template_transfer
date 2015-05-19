@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require "./lib/template_transfer/script"
+
+begin
+  TemplateTransfer::Script.new(ARGV).run()
+rescue OptionParser::InvalidOption => e
+  TemplateTransfer::Script.new(["-h"])
+end
