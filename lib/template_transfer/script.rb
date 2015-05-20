@@ -9,6 +9,7 @@ require 'json'
 module TemplateTransfer
   class Script
     attr_reader :config
+    attr_reader :template_array
 
     def initialize( args )
       @production = false
@@ -19,19 +20,25 @@ module TemplateTransfer
       # Set environment
       parse_command_line_options( args )
 
-      puts "Script initialized!"
+      puts "TemplateTransfer::Script initialized!"
+      puts
     end
 
     def run
-      retrieve_all_template_info
-      puts '-----------------------------------------------------------'
-      retrieve_single_template( 'aed176b4-7e69-4511-8a34-4f659e0305d6' )
+      home_template_array = retrieve_all_template_info
+
+      home_template_array.each do |item|
+        away_template = retrieve_single_template( item[:id] )
+        save_template( away_template )
+        puts '--------------------------------------------------'
+      end
     end
 
     # Retrieve all template information. Build an array of template ids
     # here over which to iterate
     def retrieve_all_template_info
-      puts "I'm in the Retrieve All Templates Module!"
+      puts "Retrieving all template ids and names for #{@username} ..."
+      puts
 
       uri = URI(@config['endpoint'])
 
@@ -44,13 +51,22 @@ module TemplateTransfer
       response = http.request( request )
       templates = JSON.parse( response.body )
 
-      save_templates( templates )
+      # Create template_id array
+      @template_array = Array.new
+
+      # Create a template hash w/ name and id for each template found
+      templates['templates'].each do |t|
+        @template_array.push({:id => t['id'], :name => t['name']})
+      end
+
+      # Return constructed temmplate array
+      return template_array
     end
 
     # Retrieve single template. This method will be iterative over
     # the result of #retrieve_all_template_info
     def retrieve_single_template( template_id )
-      puts "I'm in the Retrieve Single Tempalte Module!"
+      puts "Retrieving template id #{template_id}."
 
       uri = URI(@config['endpoint'] + '/' + template_id)
 
@@ -63,13 +79,18 @@ module TemplateTransfer
       response = http.request( request )
       template = JSON.parse( response.body )
 
-      puts JSON.pretty_generate( template )
+      # puts JSON.pretty_generate( template )
     end
 
     # Save each template content here. This method will be iterative
     # over the result of #retrieve_single_template
-    def save_templates( templates )
-      puts JSON.pretty_generate( templates )
+    def save_template( template )
+      filename = "./templates/#{template['id']}.json"
+      file = File.new(filename, "w")
+        puts "Saving #{filename} ..."
+        file.write( template )
+      file.close
+      # puts template
     end
 
     # Create a single template (in new location/account). This method
