@@ -35,7 +35,7 @@ module TemplateTransfer
         puts '--------------------------------------------------'
         home_template = retrieve_single_template( item[:id] )
         backup_template( home_template )
-        away_template_id = create_template( "Transfered"+item[:name] )
+        away_template_id = create_template( "Transfered "+item[:name] )
         populate_template( away_template_id, home_template )
         puts '--------------------------------------------------'
       end
@@ -125,7 +125,7 @@ module TemplateTransfer
     # #save_templates. Each file will be read in iteratively, and content
     # matched to correct template.
     def populate_template( template_id, imported_template )
-      puts "Populating new tempalte w/ id: #{template_id}..."
+      puts "Populating new tempalte id: #{template_id}..."
 
       uri = URI(@config['endpoint']+"/#{template_id}/versions")
 
@@ -136,21 +136,20 @@ module TemplateTransfer
       request.basic_auth(@secondary_username, @secondary_password)
 
 
+      # If versions exist, transfer each to new template
       imported_template['versions'].each do |version|
         version.delete("id")
         version.delete("user_id")
         version.delete("template_id")
         version.delete("updated_at")
+
+        puts "    Adding template version #{version['name']}..."
+        payload = version.to_json
+        request.body = payload
+        response = http.request( request )
+        response_message = JSON.parse( response.body )
       end
-
-      payload = imported_template['versions'].to_json
-      request.body = payload
-
-      response = http.request( request )
-      response_message = JSON.parse( response.body )
-      require 'pry'; binding.pry
     end
-
 
     def parse_command_line_options( args )
       parser = OptionParser.new do |option|

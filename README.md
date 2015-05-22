@@ -27,3 +27,7 @@ This repo houses a script that is intended to retrieve Sendgrid templates from a
 - Current attempts at populating the newly created template results in a 400 error from Sendgrid:
     + Net::HTTPBadRequest 400 BAD REQUEST readbody=true
     + {"error"=>"JSON is malformed"}
+
+- May 22, 2015
+1. Working proptotype script!
+2. Template are now being tranffered, including versions.
