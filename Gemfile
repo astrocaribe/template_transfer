@@ -1,5 +1,5 @@
 # Generated from /Users/tleblanc/projects/sandbox/template_transfer/template_transfer.gemspec
-source :gemcutter
+source 'https://rubygems.org'
 
 group :development do
   gem "pry", "~> 0"
