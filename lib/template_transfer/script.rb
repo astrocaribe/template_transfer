@@ -14,8 +14,12 @@ module TemplateTransfer
     def initialize( args )
       @production = false
       @config = YAML::load(File.open('config/config.yml'))
-      @username = @config['sendgrid']['username']
-      @password = @config['sendgrid']['password']
+      config["sendgrid"].each { |key, value| instance_variable_set("@#{key}", value) }
+
+      @primary_username = 'astrocaribe'
+      @primary_password = @astrocaribe
+      @secondary_username = 'tlcommodore'
+      @secondary_password = @tlcommodore
 
       # Set environment
       parse_command_line_options( args )
@@ -28,8 +32,11 @@ module TemplateTransfer
       home_template_array = retrieve_all_template_info
 
       home_template_array.each do |item|
-        away_template = retrieve_single_template( item[:id] )
-        save_template( away_template )
+        puts '--------------------------------------------------'
+        home_template = retrieve_single_template( item[:id] )
+        backup_template( home_template )
+        away_template_id = create_template( "Transfered"+item[:name] )
+        populate_template( away_template_id, home_template )
         puts '--------------------------------------------------'
       end
     end
@@ -37,7 +44,7 @@ module TemplateTransfer
     # Retrieve all template information. Build an array of template ids
     # here over which to iterate
     def retrieve_all_template_info
-      puts "Retrieving all template ids and names for #{@username} ..."
+      puts "Retrieving all template ids and names for #{@primary_username} ..."
       puts
 
       uri = URI(@config['endpoint'])
@@ -46,7 +53,7 @@ module TemplateTransfer
       http = Net::HTTP.new( uri.host,uri.port )
       http.use_ssl = true
       request = Net::HTTP::Get.new( uri.request_uri )
-      request.basic_auth(@username, @password)
+      request.basic_auth(@primary_username, @primary_password)
 
       response = http.request( request )
       templates = JSON.parse( response.body )
@@ -74,36 +81,76 @@ module TemplateTransfer
       http = Net::HTTP.new( uri.host,uri.port )
       http.use_ssl = true
       request = Net::HTTP::Get.new( uri.request_uri )
-      request.basic_auth(@username, @password)
+      request.basic_auth(@primary_username, @primary_password)
 
       response = http.request( request )
       template = JSON.parse( response.body )
-
-      # puts JSON.pretty_generate( template )
     end
 
     # Save each template content here. This method will be iterative
     # over the result of #retrieve_single_template
-    def save_template( template )
+    def backup_template( template )
       filename = "./templates/#{template['id']}.json"
       file = File.new(filename, "w")
-        puts "Saving #{filename} ..."
+        puts "Backing up #{filename} ..."
         file.write( template )
       file.close
-      # puts template
     end
 
     # Create a single template (in new location/account). This method
     # will be iterative over the result of #save_templates. The templates
     # created here will be blank.
-    def create_template
+    def create_template( template_name )
+      puts "Creating new template #{template_name} at #{@secondary_username}..."
+
+      uri = URI(@config['endpoint'])
+
+      # Retrieve templates
+      http = Net::HTTP.new( uri.host,uri.port )
+      http.use_ssl = true
+      request = Net::HTTP::Post.new( uri.request_uri, initheader = {'Content-Type:' => 'application/json'} )
+      request.basic_auth(@secondary_username, @secondary_password)
+
+      payload = {:name => "#{template_name}"}.to_json
+      request.body = payload
+
+      response = http.request( request )
+      new_template_info = JSON.parse( response.body )
+      new_template_id = new_template_info['id']
+
+      return new_template_id
     end
 
     # Popuate the newy created templates with the content received from
     # #save_templates. Each file will be read in iteratively, and content
     # matched to correct template.
-    def populate_template
+    def populate_template( template_id, imported_template )
+      puts "Populating new tempalte w/ id: #{template_id}..."
+
+      uri = URI(@config['endpoint']+"/#{template_id}/versions")
+
+      # Retrieve templates
+      http = Net::HTTP.new( uri.host,uri.port )
+      http.use_ssl = true
+      request = Net::HTTP::Post.new( uri.request_uri, initheader = {'Content-Type:' => 'application/json'} )
+      request.basic_auth(@secondary_username, @secondary_password)
+
+
+      imported_template['versions'].each do |version|
+        version.delete("id")
+        version.delete("user_id")
+        version.delete("template_id")
+        version.delete("updated_at")
+      end
+
+      payload = imported_template['versions'].to_json
+      request.body = payload
+
+      response = http.request( request )
+      response_message = JSON.parse( response.body )
+      require 'pry'; binding.pry
     end
+
 
     def parse_command_line_options( args )
       parser = OptionParser.new do |option|
