@@ -35,10 +35,13 @@ module TemplateTransfer
         puts '--------------------------------------------------'
         home_template = retrieve_single_template( item[:id] )
         backup_template( home_template )
-        away_template_id = create_template( "Transfered "+item[:name] )
+        away_template_id = create_template( config['prepend_name']+item[:name] )
         populate_template( away_template_id, home_template )
         puts '--------------------------------------------------'
       end
+
+      puts
+      puts 'All templates transffered!'
     end
 
     # Retrieve all template information. Build an array of template ids
