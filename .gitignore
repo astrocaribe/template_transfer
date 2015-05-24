@@ -12,3 +12,6 @@ Gemfile.lock
 
 # Omit saved template files
 templates/*
+
+# Omit RSpec related files
+.rspec

@@ -18,8 +18,11 @@ Gem::Specification.new do |s|
   s.license       = 'MIT'
 
   # Runtime dependencies
+  s.add_runtime_dependency 'rspec', '~> 3.2'
+  s.add_runtime_dependency 'mocha', '~> 1.1'
 
   # Development dependencies
-  s.add_development_dependency 'pry',  '~> 0'
-  s.add_development_dependency 'json', '~> 0'
+  s.add_development_dependency 'pry',   '~> 0'
+  s.add_development_dependency 'json',  '~> 0'
+  s.add_development_dependency 'rspec', '~> 3.2'
 end
