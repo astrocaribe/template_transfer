@@ -1,273 +1,157 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Sendgrid Template Transfer : Ruby script to transfer Sendgrid templates from one account to another, using the Sendgrid Template API.">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Sendgrid Template Transfer</title>
+    <meta charset="UTF-8">
+    <title>Sendgrid Template Transfer by astrocaribe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
+    <section class="page-header">
+      <h1 class="project-name">Sendgrid Template Transfer</h1>
+      <h2 class="project-tagline">Ruby script to transfer Sendgrid templates from one account to another, using the Sendgrid Template API.</h2>
+      <a href="https://github.com/astrocaribe/template_transfer" class="btn">View on GitHub</a>
+      <a href="https://github.com/astrocaribe/template_transfer/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/astrocaribe/template_transfer/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/astrocaribe/template_transfer">View on GitHub</a>
+    <section class="main-content">
+      <h1>
+<a id="sendgrid-template-transfer-ruby-script" class="anchor" href="#sendgrid-template-transfer-ruby-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sendgrid Template Transfer Ruby Script</h1>
 
-          <h1 id="project_title">Sendgrid Template Transfer</h1>
-          <h2 id="project_tagline">Ruby script to transfer Sendgrid templates from one account to another, using the Sendgrid Template API.</h2>
+<hr>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/astrocaribe/template_transfer/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/astrocaribe/template_transfer/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+<p>Currently, there is not an easy option for transferring templates within Sendgrid from one account to another; say, from a development account to a production. While trying to execute this for my current job, I could not find a solution that was already created for this very purpose.</p>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a id="templatetransferscript" class="anchor" href="#templatetransferscript" aria-hidden="true"><span class="octicon octicon-link"></span></a>TemplateTransfer::Script</h1>
+<p>However, Sendgrid does provide a <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/templates.html">Template API</a> for this very purpose. This particular solution is for Ruby, but I'm sure other languages can be supported as well. I plan to create a Python solution script for this as well in my free time, so look out for this in the future!</p>
 
-<h2>
-<a id="scope" class="anchor" href="#scope" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scope</h2>
-
-<p>The purpose of this script is tranfer Sendgrid templates and their versions from one account to another.</p>
-
-<p>Currently, Sendgrid does not the option for automatic bulk tranfer of templates; to accomplish this task, templates have to be manually copied from one account, and saved to the other. This script automatates this task, using the available Sendgrid template API (<a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/templates.html">https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/templates.html</a>).</p>
-
-<h2>
-<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
-
-<p>It is recommended to configre an RVM gemset:</p>
-
-<pre><code>$&gt; echo 'ruby-2.1.2' &gt; .ruby-version
-$&gt; echo 'template_tranfer' &gt; .ruby-gemset
-</code></pre>
-
-<p>Note: The <code>$&gt;</code> is meant to signify the terminal prompt, and is not part of the command; do not include this prompt in your command line!</p>
-
-<p>Install bundled gems:</p>
-
-<pre><code>$&gt; bundle install
-</code></pre>
-
-<p>Note: This script is bundled as a gem; there are no other dependencies except the ones bundled with this gem (available via <a href="http://rubygems.com">http://rubygems.com</a>).</p>
+<p>I wrote this to save others the pain of doing this from scratch; I do hope that you find this useful! Below I outline the transfer flow, with included sidenotes of discoveries I made along the way. Enjoy!</p>
 
 <h2>
 <a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
 
-<p>This project expects a local config/config.yml to specify the following:</p>
-
-<ol>
-<li>
-<strong>sendgrid:</strong> Sendgrid credentials for accounts to transfer templates <em>from</em> and <em>to</em>, in that order.</li>
-<li>
-<strong>prepend_name:</strong> String text to prepend to the beginning of each template name, to help distiguish tranffered templates.</li>
-<li>
-<strong>endpoint:</strong> URI endpoint for the Sendgrid template API operations.</li>
-</ol>
-
-<p>An example file has been supplied and the primary file is ignored by version control:</p>
-
-<pre><code>$&gt; cp config/config.yml.example config/config.yml
-</code></pre>
+<p>Please refer to the <a href="https://github.com/astrocaribe/template_transfer">script</a> repo on specifics for configuration.</p>
 
 <h2>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+<a id="script-flow" class="anchor" href="#script-flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Script Flow</h2>
 
-<p>The script can be run directly from the <em>bin/</em> directory; first, make the script launcher executable, if it isn't already:</p>
+<p>This script was born out of the lack of resources on how to transfer templates between accounts, using the supplied Sendgrid <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/templates.html">Template API</a> and corresponding <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/versions.html">Template Versions</a> documentation for transferring multiple versions of a template.</p>
 
-<pre><code>$&gt; chmod +x bin/template_transfer
+<p><strong>Note:</strong> <em>This solution was coded in Ruby 2.1.2; to code in another language, use this flow as a guide, and code against appropriate analogs.</em></p>
+
+<p><strong>Important Caveat:</strong> <em>Currently, this script *</em>does not** selectively copy templates. This script will copy <strong>ALL</strong> of the templates from the first account.*</p>
+
+<p>With that out of the way, here's the current flow, all examples within are drawn from the <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/templates.html">Template API</a> docs:</p>
+
+<h3>
+<a id="1-retrieve-all-available-templates-from-account1" class="anchor" href="#1-retrieve-all-available-templates-from-account1" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Retrieve all available templates from Account1</h3>
+
+<p>In this step, all templates are copied from the first account (the <em>transfer from</em> account). This operation <em>does not</em> copy the template content; only the identifying information is retrieved:</p>
+
+<pre><code>{
+  "templates": [
+    {
+      "id": "e8ac01d5-a07a-4a71-b14c-4721136fe6aa",
+      "name": "example template name",
+      "versions": [
+        {
+          "id": "5997fcf6-2b9f-484d-acd5-7e9a99f0dc1f",
+          "template_id": "9c59c1fb-931a-40fc-a658-50f871f3e41c",
+          "active": 1,
+          "name": "example version name",
+          "updated_at": "2014-03-19 18:56:33"
+        }]
+     }]
+}
 </code></pre>
 
-<p>Then execute the script:</p>
+<p>Template versions are also retrieved, but still no template content.</p>
 
-<pre><code>$&gt; bin/template_transfer
+<p>As such, the approach here is to retrieve all the templates, and store the main :id and :name of each in an array in memory. A sample Curl example to the API looks like this:</p>
+
+<pre><code>curl -X GET https://username:password@api.sendgrid.com/v3/templates/
 </code></pre>
 
-<p>You can also time the script operation to determine how long the transfer takes:</p>
+<h3>
+<a id="2-recursively-retrieve-each-template-from-account1" class="anchor" href="#2-recursively-retrieve-each-template-from-account1" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Recursively retrieve each template from Account1</h3>
 
-<pre><code>$&gt; time bin/template_transfer
+<p>Using the stored array in memory, each template is then retrieved using <img class="emoji" title=":id:" alt=":id:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f194.png" height="20" width="20" align="absmiddle"></p>
+
+<pre><code>curl -X GET https://username:password@api.sendgrid.com/v3/templates/:template_id
 </code></pre>
 
-<h2>
-<a id="templatetransferscript-flow" class="anchor" href="#templatetransferscript-flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>TemplateTransfer::Script Flow</h2>
+<p>This operation now retrieves the information of interest needed to transfer the templates intact to the receiving account:</p>
 
-<p>This script was born out of the lack of resources to transfer templates between accounts, using the supplied Sendgrid Template API (<a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/templates.html">https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/templates.html</a>). Below is an outline of the process I used to accomplish the task. Most of this was trial and error, and I want to save others the pain of this process.</p>
+<pre><code>{
+  "templates": [
+    {
+      "id": "e8ac01d5-a07a-4a71-b14c-4721136fe6aa",
+      "name": "example template name",
+      "versions": [
+        {
+          "id": "de37d11b-082a-42c0-9884-c0c143015a47",
+          "user_id": 1234,
+          "template_id": "d51480ba-ca3f-465c-bc3e-ceb71d73c38d",
+          "active": 1,
+          "name": "example version",
+          "html_content": "&lt;%body%&gt;&lt;strong&gt;Click to Reset&lt;/strong&gt;",
+          "plain_content": "Click to Reset&lt;%body%&gt;",
+          "subject": "&lt;%subject%&gt;",
+          "updated_at": "2014-05-22 20:05:21"
+        }]
+      }]
+}
+</code></pre>
 
-<p>Note that this solution was coded in Ruby 2.1.2; to code in another language, just use this flow and code against appropriate analogs. I may code this solution in Python as well, if there is demand.</p>
-
-<p><strong>Important Caveat:</strong> This script <strong>does not</strong> selectively copy templates, nor is there the ability to select the templates that you want tranffered. This script will copy <strong>ALL</strong> templates from the first account!</p>
-
-<h3>
-<a id="tranfer-steps" class="anchor" href="#tranfer-steps" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tranfer Steps</h3>
-
-<ol>
-<li>
-<p>Copy all templates from Account1 (account you want to copy templates from):</p>
-
-<ul>
-<li>This operation does not copy the template contents, though identifying metadata for templates and underlying versions (id, name, etc.) are returned.</li>
-<li>The :name and :id of each template is stored in an array in memory for use in the following steps.</li>
-<li>Curl Example: <code>curl -X GET https://username:password@api.sendgrid.com/v3/templates/</code>
-</li>
-</ul>
-</li>
-<li>
-<p>Retrieve each template, with given :id from step 1:</p>
-
-<ul>
-<li>This operation retrieve one template, but returns all relevant data for that template (:name, :id, :versions, :html_content, :plain_content, etc.)</li>
-<li>Returns the retrieved template.</li>
-<li>Cur Example: <code>curl -X GET https://username:password@api.sendgrid.com/v3/templates/:template_id</code>
-</li>
-</ul>
-</li>
-<li>
-<p>Backup template:</p>
-
-<ul>
-<li>This step stores this template in a JSON file in the templates/ directory</li>
-<li>Name format is ':template_id'.json</li>
-</ul>
-</li>
-<li>
-<p>Create an empty template in Account2 (receiving account):</p>
-
-<ul>
-<li>Before any template information can be tranffered, a new template needs to be created.</li>
-<li>A name is required to create the new template. The name of the original template, with a prepended string is used in the script.</li>
-<li>The newly created template will have a different :id than the original</li>
-<li>
-<strong>Note:</strong> If a template with the name that already exist is attempted, the creation will fail.</li>
-<li>Curl Example <code>curl -H "Content-Type: application/json" -X POST -d {"name":"template_name"} https://username:password@api.sendgrid.com/v3/templates/</code>
-</li>
-</ul>
-</li>
-<li>
-<p>Populate template:</p>
-
-<ul>
-<li>Tranfer the template information retrieved in step 2.</li>
-<li>Script pushes versions of current template, one at a time, if different versions exist.</li>
-<li>Relevant template version documentation can be found at <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/versions.html">https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/versions.html</a>
-</li>
-<li>Curl Example <code>curl -H "Content-Type: application/json" -X POST -d @template_content.json https://username:password@api.sendgrid.com/v3/templates/:template_id/versions</code>
-</li>
-</ul>
-</li>
-<li>
-<p>Repeat steps #2-#5 until the end of the array returned in step #1</p>
-
-<ul>
-<li>Perform Steps #2 thru #5 for all templates in the array.</li>
-</ul>
-</li>
-</ol>
-
-<hr>
-
-<h1>
-<a id="notes" class="anchor" href="#notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Notes</h1>
+<p>Of interest are the following key pairs for transferring templates intact; :name, :subject, :html_content, :plain_content, and :active. Refer to <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/versions.html">Template Versions</a> POST action for more information.</p>
 
 <h3>
-<a id="may-18-2015" class="anchor" href="#may-18-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>May 18, 2015</h3>
+<a id="3-backup-templates-to-an-external-file" class="anchor" href="#3-backup-templates-to-an-external-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Backup templates to an external file</h3>
 
-<hr>
+<p>The templates (and their versions) will be stored in a JSON file, with the named format as:</p>
 
-<ol>
-<li>Retrieving all templates from a given account DOES NOT return template content. As such, the following approach will be taken:
+<pre><code>':template_id'.json
+</code></pre>
 
-<ul>
-<li>Retrieve all template information, and build an array of main template ids.</li>
-<li>Iterate through array to retrieve/store content for each template (including versions).</li>
-</ul>
-</li>
-</ol>
+<p>This is an additional step meant to safeguard against a complete loss of templates should something happen after transferring templates, e.g., deleting the first account.</p>
 
 <h3>
-<a id="may-19-2015" class="anchor" href="#may-19-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>May 19, 2015</h3>
+<a id="4-create-an-empty-template-in-account2" class="anchor" href="#4-create-an-empty-template-in-account2" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. Create an empty template in Account2</h3>
 
-<hr>
+<p>Before any templates can be copied to the second account (<em>transfer to</em> account), a new template needs to be created. A name is required to create the new template; the :name key pair saved in Step #1 is used in this step. A prepend string can be configured to distinguish the new template from any existing templates in the second account:</p>
 
-<ol>
-<li>Based on experience from last coding session, script now follows these steps:
+<pre><code>curl -H "Content-Type: application/json" -X POST -d {"name":"Prepend_text"+"template_name"} https://username:password@api.sendgrid.com/v3/templates/
+</code></pre>
 
-<ul>
-<li>Retrieves all templates from account, storing :id and :name in an template array of hashes.</li>
-<li>Iterates over template array, retrieving by template id, then storing each retrieved template in an external file (template_id.json), including metadata (versions, html_content, plain_content, for example).</li>
-</ul>
-</li>
-</ol>
+<p>Note that the newly created template will have a different :id than that of the existing template. Also note that if the template already exists, template creation will fail. <strong>There is currently no check to skip already created templates, and it is unknown how the process will fail as this scenario has not been tested yet</strong>.</p>
 
 <h3>
-<a id="may-20-2015" class="anchor" href="#may-20-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>May 20, 2015</h3>
+<a id="5-populate-template" class="anchor" href="#5-populate-template" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Populate template</h3>
 
-<hr>
+<p>Transfer the template content to the newly created template, using the <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/versions.html">Template Versions API</a>.</p>
 
-<ol>
-<li>Changed #save_template to #backup_template. Since the downloaded template will already be in memory, it makes more sense to backup the template for prosperity's sake, then create and populate a new template with the current template in memory. No need to read a file for this operation!</li>
-<li>Include the 2nd account (secondary_account?) to config.yml file. This will be needed for creating and populating the new templates.</li>
-</ol>
+<pre><code>curl -H "Content-Type: application/json" -X POST -d @template_content.json https://username:password@api.sendgrid.com/v3/templates/:template_id/versions
+</code></pre>
 
-<h3>
-<a id="may-21-2015" class="anchor" href="#may-21-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>May 21, 2015</h3>
-
-<hr>
-
-<ol>
-<li>Script now creates a new template for every imported template.</li>
-<li>Currently attempting to populate new templates with versions from the imported template.</li>
-</ol>
-
-<h4>
-<a id="observations" class="anchor" href="#observations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Observations:</h4>
-
-<ul>
-<li>Version names must be unique accross accounts</li>
-<li>If template already exists, 400 response is returned
-
-<ul>
-<li>I'm going to assume that all templates will be unique on the CHC site</li>
-</ul>
-</li>
-<li>Current attempts at populating the newly created template results in a 400 error from Sendgrid:
-
-<ul>
-<li>Net::HTTPBadRequest 400 BAD REQUEST readbody=true</li>
-<li>{"error"=&gt;"JSON is malformed"}</li>
-</ul>
-</li>
-</ul>
+<p>The versions of each template is pushed, one at a time, to the new template, using the required key pairs described in Step #2. As a safeguard, all other information is stripped from the version before pushing changes, i.e., information such as :user_id and :updated_at, as these are regenerated on transfer.</p>
 
 <h3>
-<a id="may-22-2015" class="anchor" href="#may-22-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>May 22, 2015</h3>
+<a id="6-wash-rinse-repeat" class="anchor" href="#6-wash-rinse-repeat" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Wash, Rinse, Repeat</h3>
 
-<hr>
+<p>Repeat Steps #2 - #5 for every template in the array retrieved in Step #1. At the end, you should have all templates transferred from your first account to the second!</p>
 
-<ol>
-<li>Working proptotype script!</li>
-<li>Template are now being tranffered, including versions.</li>
-<li>The previous error was due to trying to process a versions array. The solution was to process each item in the array seperately.</li>
-</ol>
-      </section>
-    </div>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/astrocaribe/template_transfer">Sendgrid Template Transfer</a> is maintained by <a href="https://github.com/astrocaribe">astrocaribe</a>.</span>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Sendgrid Template Transfer maintained by <a href="https://github.com/astrocaribe">astrocaribe</a></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
 
-    
+    </section>
 
+  
   </body>
 </html>
+
