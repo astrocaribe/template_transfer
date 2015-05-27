@@ -2,6 +2,6 @@ sendgrid:
   account_from: password
   account_to: password
 
-prepend_name: 'Transffered '
+prepend_name: 'Transferred '
 
 endpoint: https://api.sendgrid.com/v3/templates

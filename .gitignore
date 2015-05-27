@@ -18,3 +18,6 @@ templates/*
 
 # Omit doc files (for now)
 docs/
+
+# Omit log files
+logs/
