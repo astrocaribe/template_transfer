@@ -14,12 +14,11 @@ module TemplateTransfer
     def initialize( args )
       @production = false
       @config = YAML::load(File.open('config/config.yml'))
-      config["sendgrid"].each { |key, value| instance_variable_set("@#{key}", value) }
 
-      @primary_username = 'astrocaribe'
-      @primary_password = @astrocaribe
-      @secondary_username = 'tlcommodore'
-      @secondary_password = @tlcommodore
+      username, password                       = config['sendgrid'].keys, config['sendgrid'].values
+      @primary_username, @primary_password     = username[0], password[0]
+      @secondary_username, @secondary_password = username[1], password[1]
+      require 'pry'; binding.pry
 
       # Set environment
       parse_command_line_options( args )
