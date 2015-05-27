@@ -15,3 +15,6 @@ templates/*
 
 # Omit RSpec related files
 .rspec
+
+# Omit doc files (for now)
+docs/
