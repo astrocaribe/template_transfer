@@ -42,12 +42,12 @@
 
 <p><strong>Note:</strong> <em>This solution was coded in Ruby 2.1.2; to code in another language, use this flow as a guide, and code against appropriate analogs.</em></p>
 
-<p><strong>Important Caveat:</strong> Currently, this script <strong>does not</strong> selectively copy templates. This script will copy <strong>ALL</strong> of the templates from the first account.</p>
+<p><strong>Important Caveat:</strong> <em>Currently, this script *</em>does not** selectively copy templates. This script will copy <strong>ALL</strong> of the templates from the first account.*</p>
 
 <p>With that out of the way, here's the current flow, all examples within are drawn from the <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/templates.html">Template API</a> docs:</p>
 
 <h3>
-<a id="1-retrieve-all-available-templates-from-account1" class="anchor" href="#1-retrieve-all-available-templates-from-account1" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Retrieve all available templates from Account1</h3>
+<a id="step-1-retrieve-all-available-templates-from-account1" class="anchor" href="#step-1-retrieve-all-available-templates-from-account1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 1. Retrieve all available templates from Account1</h3>
 
 <p>In this step, all templates are copied from the first account (the <em>transfer from</em> account). This operation <em>does not</em> copy the template content; only the identifying information is retrieved:</p>
 
@@ -76,9 +76,9 @@
 </code></pre>
 
 <h3>
-<a id="2-recursively-retrieve-each-template-from-account1" class="anchor" href="#2-recursively-retrieve-each-template-from-account1" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Recursively retrieve each template from Account1</h3>
+<a id="step-2-recursively-retrieve-each-template-from-account1" class="anchor" href="#step-2-recursively-retrieve-each-template-from-account1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 2. Recursively retrieve each template from Account1</h3>
 
-<p>Using the stored array in memory, each template is then retrieved using <img class="emoji" title=":id:" alt=":id:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f194.png" height="20" width="20" align="absmiddle"></p>
+<p>Using the stored array in memory, each template is then retrieved using :id;</p>
 
 <pre><code>curl -X GET https://username:password@api.sendgrid.com/v3/templates/:template_id
 </code></pre>
@@ -109,7 +109,7 @@
 <p>Of interest are the following key pairs for transferring templates intact; :name, :subject, :html_content, :plain_content, and :active. Refer to <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/versions.html">Template Versions</a> POST action for more information.</p>
 
 <h3>
-<a id="3-backup-templates-to-an-external-file" class="anchor" href="#3-backup-templates-to-an-external-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Backup templates to an external file</h3>
+<a id="step-3-backup-templates-to-an-external-file" class="anchor" href="#step-3-backup-templates-to-an-external-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 3. Backup templates to an external file</h3>
 
 <p>The templates (and their versions) will be stored in a JSON file, with the named format as:</p>
 
@@ -119,17 +119,20 @@
 <p>This is an additional step meant to safeguard against a complete loss of templates should something happen after transferring templates, e.g., deleting the first account.</p>
 
 <h3>
-<a id="4-create-an-empty-template-in-account2" class="anchor" href="#4-create-an-empty-template-in-account2" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. Create an empty template in Account2</h3>
+<a id="step-4-create-an-empty-template-in-account2" class="anchor" href="#step-4-create-an-empty-template-in-account2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 4. Create an empty template in Account2</h3>
 
 <p>Before any templates can be copied to the second account (<em>transfer to</em> account), a new template needs to be created. A name is required to create the new template; the :name key pair saved in Step #1 is used in this step. A prepend string can be configured to distinguish the new template from any existing templates in the second account:</p>
 
 <pre><code>curl -H "Content-Type: application/json" -X POST -d {"name":"Prepend_text"+"template_name"} https://username:password@api.sendgrid.com/v3/templates/
 </code></pre>
 
-<p>Note that the newly created template will have a different :id than that of the existing template. Also note that if the template already exists, template creation will fail. <strong>There is currently no check to skip already created templates, and it is unknown how the process will fail as this scenario has not been tested yet</strong>.</p>
+<p><strong>Notes:</strong><br>
+1. Newly created template will have a different :id than that of the existing template.<br>
+2. If the template already exists, template creation will fail, and a 400 response is returned. <strong>There is currently no check to skip already created templates, and it is unknown how the process will fail as this scenario has not been tested yet</strong>.<br>
+3. Version names <strong>must be unique</strong> accross templates within an account.</p>
 
 <h3>
-<a id="5-populate-template" class="anchor" href="#5-populate-template" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Populate template</h3>
+<a id="step-5-populate-template" class="anchor" href="#step-5-populate-template" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 5. Populate template</h3>
 
 <p>Transfer the template content to the newly created template, using the <a href="https://sendgrid.com/docs/API_Reference/Web_API_v3/Template_Engine/versions.html">Template Versions API</a>.</p>
 
@@ -139,7 +142,7 @@
 <p>The versions of each template is pushed, one at a time, to the new template, using the required key pairs described in Step #2. As a safeguard, all other information is stripped from the version before pushing changes, i.e., information such as :user_id and :updated_at, as these are regenerated on transfer.</p>
 
 <h3>
-<a id="6-wash-rinse-repeat" class="anchor" href="#6-wash-rinse-repeat" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Wash, Rinse, Repeat</h3>
+<a id="step-6-wash-rinse-repeat" class="anchor" href="#step-6-wash-rinse-repeat" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 6. Wash, Rinse, Repeat</h3>
 
 <p>Repeat Steps #2 - #5 for every template in the array retrieved in Step #1. At the end, you should have all templates transferred from your first account to the second!</p>
 
