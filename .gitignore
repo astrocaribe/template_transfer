@@ -1,0 +1,7 @@
+.rspec
+.ruby-*
+Gemfile*
+config/
+docs/
+logs/
+templates/
