@@ -18,7 +18,6 @@ module TemplateTransfer
       username, password                       = config['sendgrid'].keys, config['sendgrid'].values
       @primary_username, @primary_password     = username[0], password[0]
       @secondary_username, @secondary_password = username[1], password[1]
-      require 'pry'; binding.pry
 
       # Set environment
       parse_command_line_options( args )
