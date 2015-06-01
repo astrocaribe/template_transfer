@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.name          = 'template_transfer'
   s.version       = TemplateTransfer::VERSION
   s.platform      = Gem::Platform::RUBY
-  s.authors       = ['Tommy Lelanc']
+  s.authors       = ['Tommy Leblanc']
   s.email         = ['tleblanc@changehealthcare.com']
   s.summary       = 'Sendgrid template transfer script'
   s.description   = 'Automated script for transfer/setup of templates'
