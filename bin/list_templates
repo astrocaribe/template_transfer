@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require "./lib/list_templates/script"
+
+begin
+  ListTemplates::Script.new(ARGV).run()
+rescue OptionParser::InvalidOption => e
+  ListTemplates::Script.new(["-h"])
+end
