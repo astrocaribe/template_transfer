@@ -12,7 +12,6 @@ module TemplateTransfer
     attr_reader :template_array
 
     def initialize( args )
-      @production = false
       @config = YAML::load(File.open('config/config.yml'))
 
       username, password                       = config['sendgrid'].keys, config['sendgrid'].values
@@ -154,7 +153,6 @@ module TemplateTransfer
 
     def parse_command_line_options( args )
       parser = OptionParser.new do |option|
-        option.on('-p', '--production', 'Set environment to production') { @production = true }
         option.on('-h', '--help', 'Display help') do |x|
           puts parser.help
           exit 0

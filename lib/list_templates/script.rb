@@ -12,7 +12,6 @@ module ListTemplates
     attr_reader :template_array
 
     def initialize( args )
-      @production = false
       @config     = YAML::load(File.open('config/config.yml'))
       @username   = nil
       @password   = nil
@@ -84,7 +83,6 @@ module ListTemplates
 
     def parse_command_line_options( args )
       parser = OptionParser.new do |option|
-        option.on('-p', '--production', 'Set environment to production') { @production = true }
         option.on('-u', '--user', 'List templates for user') do |u|
           @username = ARGV[0]
         end
