@@ -46,7 +46,7 @@ module ListTemplates
 
     def retrieve_all_template_info
       config['sendgrid'].each do |c|
-        if c[0] == @username.to_sym then
+        if c[0].to_sym == @username.to_sym then
           @password = c[1]
         end
       end
