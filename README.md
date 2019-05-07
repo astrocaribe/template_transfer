@@ -53,6 +53,22 @@ You can also time the script operation to determine how long the transfer takes:
 
     $> time bin/template_transfer
 
+## Tests
+
+Spec tests are run using `rspec`. Make sure to install bundled gems as described in [setup](#setup) section above. A valid config.yml file is
+also required. See [configuration](#configuration) section above.
+Once `rspec` is installed, run the tests by using:
+
+```bash
+$> rspec spec
+```
+
+**Note**: It has been ages since I've worked in Ruby, and the intentions
+of the test suite was to cover all the cases that this tools was meant
+to be used for. I have since moved on to other languages, and never had
+the opportunity to complete them. Feel free to contibute by
+adding/fleching out these tests, if I don't have the change to get back
+to them!
 
 ## TemplateTransfer::Script Flow
 
