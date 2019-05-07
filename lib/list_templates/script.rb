@@ -12,7 +12,6 @@ module ListTemplates
     attr_reader :template_array
 
     def initialize( args )
-      @production = false
       @config     = YAML::load(File.open('config/config.yml'))
       @username   = nil
       @password   = nil
@@ -46,7 +45,7 @@ module ListTemplates
 
     def retrieve_all_template_info
       config['sendgrid'].each do |c|
-        if c[0] == @username.to_sym then
+        if c[0].to_sym == @username.to_sym then
           @password = c[1]
         end
       end
@@ -84,7 +83,6 @@ module ListTemplates
 
     def parse_command_line_options( args )
       parser = OptionParser.new do |option|
-        option.on('-p', '--production', 'Set environment to production') { @production = true }
         option.on('-u', '--user', 'List templates for user') do |u|
           @username = ARGV[0]
         end
