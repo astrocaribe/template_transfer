@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
 
   # Development dependencies
   s.add_development_dependency 'pry',   '~> 0'
-  s.add_development_dependency 'json',  '~> 0'
+  s.add_development_dependency 'json',  '~> 2.2.0'
   s.add_development_dependency 'rspec', '~> 3.2'
 end
